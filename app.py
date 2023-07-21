@@ -1,24 +1,24 @@
-#importing the necessary libraries
-import mysql.connector as sql
+#importing the necessary librariesd
 import pandas as pd
 import plotly.express as px
-import pymongo
 import streamlit as st
+from streamlit_option_menu import option_menu
+import mysql.connector as sql
+import pymongo
 from googleapiclient.discovery import build
 from PIL import Image
-from streamlit_option_menu import option_menu
 
 # SETTING PAGE CONFIGURATIONS
 icon = Image.open("Youtube_logo.png")
-st.set_page_config(page_title= "Youtube Data Harvesting and Warehousing",
+st.set_page_config(page_title= "Youtube Data Harvesting and Warehousing | By Samuel Solomon",
                    page_icon= icon,
                    layout= "wide",
                    initial_sidebar_state= "expanded",
-                   menu_items={'About': ""})
+                   menu_items={'About': """# This app is created by *Samuel Solomon!*"""})
 
 # CREATING OPTION MENU
 with st.sidebar:
-    selected = option_menu(None, ["Home","Extract and Transform","View"], 
+    selected = option_menu(None, ["Home","Extract & Transform","View"], 
                            icons=["house-door-fill","tools","card-text"],
                            default_index=0,
                            orientation="vertical",
@@ -29,19 +29,19 @@ with st.sidebar:
                                    "nav-link-selected": {"background-color": "#C80101"}})
 
 # Bridging a connection with MongoDB Atlas and Creating a new database(youtube_data)
-client = pymongo.MongoClient("mongodb://localhost:27017/")
-db = client['youtube_data']
-
+client = pymongo.MongoClient("localhost:27017")
+db = client.Youtube_Data_Sam
 # CONNECTING WITH MYSQL DATABASE
-mydb = sql.connect(host="localhost",
+mydb = sql.connect(host="127.0.0.1",
                    user="root",
-                   password="Deol1000%sexy",
-                   database= "youtube_db"
+                   password="123456",
+                   database= "youtube",
+                   port = "3307"
                   )
 mycursor = mydb.cursor(buffered=True)
 
 # BUILDING CONNECTION WITH YOUTUBE API
-api_key = "AIzaSyCkglXpsoXo7QjsLDBAL8mzCfX4YZzpdtg"
+api_key = "AIzaSyC9lK5JiTsTcRPq121wKccpM6CiJe5CRgg" #"AIzaSyAc5yh9GIFfaop4yMixH2KVqHZGuKpEAWU" 
 youtube = build('youtube','v3',developerKey=api_key)
 
 
@@ -157,7 +157,7 @@ def channel_names():
 # HOME PAGE
 if selected == "Home":
     # Title Image
-    
+    st.image("title.png")
     col1,col2 = st.columns(2,gap= 'medium')
     col1.markdown("## :blue[Domain] : Social Media")
     col1.markdown("## :blue[Technologies used] : Python,MongoDB, Youtube Data API, MySql, Streamlit")
@@ -165,12 +165,12 @@ if selected == "Home":
     col2.markdown("#   ")
     col2.markdown("#   ")
     col2.markdown("#   ")
-    col2.image("youtubeMain.png")
+
     
     
-# EXTRACT and TRANSFORM PAGE
-if selected == "Extract and Transform":
-    tab1,tab2 = st.tabs(["$\huge EXTRACT $", "$\huge TRANSFORM $"])
+# EXTRACT AND TRANSFORM PAGE
+if selected == "Extract & Transform":
+    tab1,tab2 = st.tabs(["$\huge 📝 EXTRACT $", "$\huge🚀 TRANSFORM $"])
     
     # EXTRACT TAB
     with tab1:
@@ -204,61 +204,57 @@ if selected == "Extract and Transform":
 
                 collections3 = db.comments_details
                 collections3.insert_many(comm_details)
-                st.success("Upload to MogoDB successful !!")
+                st.success("Upload to MongoDB successful !!")
       
     # TRANSFORM TAB
     with tab2:     
-        st.markdown("#   ")
-        st.markdown("### Select a channel to begin Transformation to SQL")
+            st.markdown("#   ")
+            st.markdown("### Select a channel to begin Transformation to SQL")
+            ch_names = channel_names()  
+            user_inp = st.selectbox("Select channel",options= ch_names)
         
-        ch_names = channel_names()
-        user_inp = st.selectbox("Select channel",options= ch_names)
-        
-        def insert_into_channels():
-                collections = db.channel_details
-                query = """INSERT INTO channels VALUES(%s,%s,%s,%s,%s,%s,%s,%s)"""
+    def insert_into_channels():
+                    collections = db.channel_details
+                    query = """INSERT INTO channels VALUES(%s,%s,%s,%s,%s,%s,%s,%s)"""
                 
-                for i in collections.find({"Channel_name" : user_inp},{'_id':0}):
-                    mycursor.execute(query,tuple(i.values()))
+                    for i in collections.find({"Channel_name" : user_inp},{'_id' : 0}):
+                        mycursor.execute(query,tuple(i.values()))
                     mydb.commit()
                 
-        def insert_into_videos():
-            collectionss = db.video_details
+    def insert_into_videos():
+            collections1 = db.video_details
             query1 = """INSERT INTO videos VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"""
 
-            for i in collectionss.find({"Channel_name" : user_inp},{"_id":0}):
-                t=tuple(i.values())
-                mycursor.execute(query1,t)
+            for i in collections1.find({"Channel_name" : user_inp},{'_id' : 0}):
+                values = [str(val).replace("'", "''").replace('"', '""') if isinstance(val, str) else val for val in i.values()]
+                mycursor.execute(query1, tuple(values))
                 mydb.commit()
 
-        def insert_into_comments():
+    def insert_into_comments():
             collections1 = db.video_details
             collections2 = db.comments_details
             query2 = """INSERT INTO comments VALUES(%s,%s,%s,%s,%s,%s,%s)"""
 
             for vid in collections1.find({"Channel_name" : user_inp},{'_id' : 0}):
                 for i in collections2.find({'Video_id': vid['Video_id']},{'_id' : 0}):
-                    t=tuple(i.values())
-                    mycursor.execute(query2,t)
+                    mycursor.execute(query2,tuple(i.values()))
                     mydb.commit()
 
-        if st.button("Submit"):
-            try:
-                
-                insert_into_channels()
-                insert_into_videos()
-                insert_into_comments()
-                st.success("Transformation to MySQL Successful!!!")
-            except:
-                st.error("Channel details already transformed!!")
+    if st.button("Submit"):
+        try:
+            insert_into_videos()
+            insert_into_channels()
+            insert_into_comments()
+            st.success("Transformation to MySQL Successful !!")
+        except:
+            st.error("Channel details already transformed !!")
             
 # VIEW PAGE
 if selected == "View":
     
     st.write("## :orange[Select any question to get Insights]")
     questions = st.selectbox('Questions',
-    ['Click the question that you would like to query',
-    '1. What are the names of all the videos and their corresponding channels?',
+    ['1. What are the names of all the videos and their corresponding channels?',
     '2. Which channels have the most number of videos, and how many videos do they have?',
     '3. What are the top 10 most viewed videos and their respective channels?',
     '4. How many comments were made on each video, and what are their corresponding video names?',
@@ -270,13 +266,14 @@ if selected == "View":
     '10. Which videos have the highest number of comments, and what are their corresponding channel names?'])
     
     if questions == '1. What are the names of all the videos and their corresponding channels?':
-        mycursor.execute("""SELECT title AS Video_Title, channel_name AS Channel_Name FROM videos ORDER BY channel_name""")
+        mycursor.execute("""SELECT title AS Video_Title, channel_name AS Channel_Name
+                            FROM videos
+                            ORDER BY channel_name""")
         df = pd.DataFrame(mycursor.fetchall(),columns=mycursor.column_names)
         st.write(df)
         
     elif questions == '2. Which channels have the most number of videos, and how many videos do they have?':
-        mycursor.execute("""SELECT channel_name 
-        AS Channel_Name, total_videos AS Total_Videos
+        mycursor.execute("""SELECT channel_name AS Channel_Name, total_videos AS Total_Videos
                             FROM channels
                             ORDER BY total_videos DESC""")
         df = pd.DataFrame(mycursor.fetchall(),columns=mycursor.column_names)
@@ -397,3 +394,6 @@ if selected == "View":
                     )
         st.plotly_chart(fig,use_container_width=True)
 
+        
+        
+    
