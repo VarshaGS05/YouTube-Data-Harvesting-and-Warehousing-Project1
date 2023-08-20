@@ -9,59 +9,80 @@ BATCH: DW54DW55
 
 DOMAIN : DATA SCIENCE
 
+Lanuage & Tool used:
+Python
+mongoDB
+pandas
+postgreSQL
 
-The application should have the following features:
+# YouTube_Scrapping
+# Introduction
+This project is a YouTube API scrapper that allows users to retrieve and analyze data from YouTube channels. It utilizes the YouTube Data API to fetch information such as channel statistics, video details, comments, and more. The scrapper provides various functionalities to extract and process YouTube data for further analysis and insights.
 
-$ Ability to input a YouTube channel ID and retrieve all the relevant data (Channel name, subscribers, total video count, playlist ID, video ID, likes, dislikes, and comments of each video) using Google API.
+# Features
+The YouTube Data Scraper offers a range of features to help you extract and analyze data from YouTube. Some of the key features include:
 
-$ Option to store the data in a MongoDB database as a data lake. Ability to collect data for up to 10 different YouTube channels and store them in the data lake by clicking a button. Option to select a channel name and migrate its data from the data lake to a SQL database as tables.
+`Retrieve channel statistics:` Get detailed information about YouTube channels, including subscriber count, view count, video count, and other relevant metrics.
 
-$ Ability to search and retrieve data from the SQL database using different search options, including joining tables to get channel details.
+`Fetch video details:` Extract data such as video title, description, duration, view count, like count, dislike count, and publish date for individual videos.
 
-$ YouTube API: You'll need to use the YouTube API to retrieve channel and video data. You can use the Google API client library for Python to make requests to the API.
+`Analyze comments:` Retrieve comments made on YouTube videos and perform analysis, such as sentiment analysis or comment sentiment distribution.
 
-$ Store data in a MongoDB data lake: Once you retrieve the data from the YouTube API, you can store it in a MongoDB data lake. MongoDB is a great choice for a data lake because it can handle unstructured and semi-structured data easily.
+`Generate reports:` Generate reports and visualizations based on the collected data, allowing users to gain insights into channel performance, video engagement, and audience interaction.
 
-$ Migrate data to a SQL data warehouse: After you've collected data for multiple channels, you can migrate it to a SQL data warehouse. You can use a SQL database such as MySQL or PostgreSQL for this.
+`Data storage:` Store the collected YouTube data in a database for easy retrieval and future reference.
 
-$ Query the SQL data warehouse: You can use SQL queries to join the tables in the SQL data warehouse and retrieve data for specific channels based on user input. You can use a Python SQL library such as SQLAlchemy to interact with the SQL database.
+# Technologies Used
+Python: The project is implemented using the Python programming language.
 
-$ Display data in the Streamlit app: Finally, you can display the retrieved data in the Streamlit app. Overall, this approach involves building a simple UI with Streamlit, retrieving data from the YouTube API, storing it in a MongoDB data lake, migrating it to a SQL data warehouse, querying the data warehouse with SQL, and displaying the data in the Streamlit app.
+`YouTube Data API:` Utilizes the official YouTube Data API to interact with YouTube's platform and retrieve data.
 
-Configuration:
+`Streamlit:` The user interface and visualization are created using the Streamlit framework, providing a seamless and interactive experience.
 
-1.Open the mainfile.py file in the project directory.
+`MongoDB:` The collected data can be stored in a MongoDB database for efficient data management and querying.
 
-2.Set the desired configuration options:
+`PostgreSQL:` A powerful open-source relational database management system used to store and manage the retrieved data.
 
-3.Specify your YouTube API key.
+`PyMongo:` A Python library that enables interaction with MongoDB, a NoSQL database. It is used for storing and retrieving data from MongoDB in the YouTube Data Scraper.
 
-4.Choose the database connection details (SQL and MongoDB).
+`Psycopg2:` A PostgreSQL adapter for Python that allows seamless integration between Python and PostgreSQL. It enables the YouTube Data Scraper to connect to and interact with the PostgreSQL database.
 
-5.Get the Youtube Channel ID from the Youtube's sourcepage
+`Pandas:` A powerful data manipulation and analysis library in Python. Pandas is used in the YouTube Data Scraper to handle and process data obtained from YouTube, providing functionalities such as data filtering, transformation, and aggregation.
 
-6.provide the Youtube Channel ID data to be harvested.
+pip install -r requirements.txt: To install the required dependencies.
 
-7.Set other configuration options as needed.
+# Process Flow
+`Obtain YouTube API credentials:` Visit the Google Cloud Console.
 
-Usage:
+Create a new project or select an existing project.
 
-1.Launch the Streamlit app: streamlit run mainfile.py
+Enable the YouTube Data API v3 for your project.
 
-2.Run the mainfile.py script, make sure you have main and sql files in the same folder.
+Create API credentials for youtube API v3.
 
-3.The app will start and open in your browser. You can explore the harvested YouTube data and visualize the results.
+# ETL Process
+Extracting Data from youtube API.
 
-Contributing:
+Transforming data into the required format.
 
-Contributions are welcome! If you want to contribute to this project, please follow these steps:
+Loading Data into SQL
 
-1.Fork the repository.
+# Application Flow
+Select Data Retrieval and Processing Page from dropdown menu at the sidebar.
 
-2.Create a new branch: "git checkout -b feature/your-feature-name"
+Input the Channel Id and click on Get Channel Statistics in order to retrive data from Youtube API.
 
-3.Make your modifications and commit the changes: "git commit -m "Add your commit message here"
+Next click on Push to MongoDB to store data in MongoDB Lake.
 
-4.Push your branch: "git push origin feature/your-feature-name"
+Select a channel name from the dropdown Channel Details and click on Push to SQL to import data into PostgreSQL.
 
-5.Open a pull request on the GitHub repository, explaining the changes you made and why they should be merged.
+Once imported, you can select the Analysis and Reports Page from the drop down to get a detailed analysis of the collected data.
+
+# Additional Information
+Please note that when using this application, it is essential to comply with the YouTube Data API's terms of service and adhere to its usage limits to ensure uninterrupted access to the API. If you encounter any issues or have questions regarding the YouTube Data Scraper, please refer to the project's detailed documentation available in the GitHub repository.
+
+# License
+The YouTube Data Scraper is released under the MIT License. Feel free to modify and use the code according to the terms of the license.
+
+# Conclusion
+This YouTube API scrapper project aims to provide a powerful tool for retrieving, analyzing, and visualizing YouTube data, enabling users to gain valuable insights into channel performance, video engagement, and audience feedback.
